@@ -12,33 +12,47 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  renderSquare(i, coordinates) {
-    return ( 
-      <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i, coordinates)}
-      />
-    );
+  getAssociatedCoordinates(index) {
+    const INDEX_COORDINATE_MAP = {
+      0: {x: 1, y: 1},
+      1: {x: 1, y: 2},
+      2: {x: 1, y: 3},
+      3: {x: 2, y: 1},
+      4: {x: 2, y: 2},
+      5: {x: 2, y: 3},
+      6: {x: 3, y: 1},
+      7: {x: 3, y: 2},
+      8: {x: 3, y: 3},
+    };
+    return INDEX_COORDINATE_MAP[index];
   }
-  
+
   render() {
+    let rows = [];
+    const squares = this.props.squares.map((square, index) => {
+      return ( 
+        <Square
+          key={index}
+          value={square}
+          onClick={() => this.props.onClick(index, this.getAssociatedCoordinates(index))}
+        />
+      );
+    });
+
+    squares.forEach((square, index) => {
+      let isRowHeaderNeeded = index % 3 === 0; 
+      if (isRowHeaderNeeded) {
+        rows.push(
+          <div key={index} className="board-row">
+            {squares.slice(index, index + 3)}
+          </div>
+        );
+      };
+    });
+
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0, {x: 1, y:1})}
-          {this.renderSquare(1, {x: 1, y:2})}
-          {this.renderSquare(2, {x:1, y:3})}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3, {x:2, y:1})}
-          {this.renderSquare(4, {x:2, y:2})}
-          {this.renderSquare(5, {x:2, y:3})}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6, {x:3, y:1})}
-          {this.renderSquare(7, {x:3, y:2})}
-          {this.renderSquare(8, {x:3, y:3})}
-        </div>
+        {rows}
       </div>
     );
   }
