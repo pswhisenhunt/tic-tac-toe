@@ -118,6 +118,10 @@ class Game extends React.Component {
       return (
         <li key={move}>
           <button onClick={() => {this.jumpTo(move)}}>{btnText}</button>
+          {step.coordinates.x && step.coordinates.y ?
+            <span>({step.coordinates.x}, {step.coordinates.y})</span>
+            : <span></span>
+          }
         </li>
       );
     });
@@ -142,9 +146,3 @@ ReactDOM.render(
   <Game />,
   document.getElementById('root')
 );
-  
-
-// {step.coordinates.x && step.coordinates.y ?
-//   <span>({step.coordinates.x}, {step.coordinates.y})</span>
-//   : <span></span>
-// }
