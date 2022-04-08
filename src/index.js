@@ -117,7 +117,10 @@ class Game extends React.Component {
       let btnText = move ? `Go to ${move}` : 'Go to Game Start';
       return (
         <li key={move}>
-          <button onClick={() => {this.jumpTo(move)}}>{btnText}</button>
+          {this.state.stepNumber === move ? 
+            <button className="bold" onClick={() => {this.jumpTo(move)}}>{btnText}</button>
+            : <button onClick={() => {this.jumpTo(move)}}>{btnText}</button>
+          }
           {step.coordinates.x && step.coordinates.y ?
             <span>({step.coordinates.x}, {step.coordinates.y})</span>
             : <span></span>
