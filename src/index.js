@@ -12,11 +12,11 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  renderSquare(i) {
+  renderSquare(i, coordinates) {
     return ( 
       <Square
         value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
+        onClick={() => this.props.onClick(i, coordinates)}
       />
     );
   }
@@ -25,19 +25,19 @@ class Board extends React.Component {
     return (
       <div>
         <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+          {this.renderSquare(0, {x: 1, y:1})}
+          {this.renderSquare(1, {x: 1, y:2})}
+          {this.renderSquare(2, {x:1, y:3})}
         </div>
         <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
+          {this.renderSquare(3, {x:2, y:1})}
+          {this.renderSquare(4, {x:2, y:2})}
+          {this.renderSquare(5, {x:2, y:3})}
         </div>
         <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
+          {this.renderSquare(6, {x:3, y:1})}
+          {this.renderSquare(7, {x:3, y:2})}
+          {this.renderSquare(8, {x:3, y:3})}
         </div>
       </div>
     );
@@ -50,13 +50,14 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        coordinates: {x: null, y: null},
       }],
       xIsNext: true,
       stepNumber: 0,
     }
   }
 
-  handleClick(i) {
+  handleClick(i, coordinates) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     let current = history[history.length - 1];
     const squares = current.squares.slice();
@@ -66,7 +67,8 @@ class Game extends React.Component {
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       history: history.concat([{
-        squares: squares
+        squares: squares,
+        coordinates: coordinates
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -116,6 +118,10 @@ class Game extends React.Component {
       return (
         <li key={move}>
           <button onClick={() => {this.jumpTo(move)}}>{btnText}</button>
+          {step.coordinates.x && step.coordinates.y ?
+            <span>({step.coordinates.x}, {step.coordinates.y})</span>
+            : <span></span>
+          }
         </li>
       );
     });
@@ -123,7 +129,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
+          <Board squares={current.squares} onClick={(i, coordinates) => this.handleClick(i, coordinates)}/>
         </div>
         <div className="game-info">
           <div>{status}</div>
@@ -140,4 +146,3 @@ ReactDOM.render(
   <Game />,
   document.getElementById('root')
 );
-  
