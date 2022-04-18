@@ -5,7 +5,7 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={"square " + (props.additionalClass)} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -29,10 +29,12 @@ class Board extends React.Component {
 
   render() {
     let rows = [];
+    let winningMoves = this.props.winningMoves ? this.props.winningMoves : [];
     const squares = this.props.squares.map((square, index) => {
       return ( 
         <Square
           key={index}
+          additionalClass={winningMoves.indexOf(index) !== -1 ? "highlight" : ""}
           value={square}
           onClick={() => this.props.onClick(index, this.getAssociatedCoordinates(index))}
         />
@@ -103,7 +105,7 @@ class Game extends React.Component {
     for (let i = 0; i < winningCombinations.length; i++) {
       const [a,b,c] = winningCombinations[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return {player: squares[a], moves: winningCombinations[i]};
       }
     }
     return null;
@@ -119,10 +121,11 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     let current = history[this.state.stepNumber];
-    let winner = this.calculateWinner(current.squares);
+    let winner = this.calculateWinner(current.squares) ? this.calculateWinner(current.squares) : null;
     let status;
+
     if (winner) {
-      status = `Winner: ${winner}`
+      status = `Winner: ${winner.player}`
     } else {
       status = `Next Player: ${this.state.xIsNext ? 'X' : 'O'}`;
     }
@@ -146,7 +149,7 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board squares={current.squares} onClick={(i, coordinates) => this.handleClick(i, coordinates)}/>
+          <Board squares={current.squares} winningMoves={winner ? winner.moves : null} onClick={(i, coordinates) => this.handleClick(i, coordinates)}/>
         </div>
         <div className="game-info">
           <div>{status}</div>
